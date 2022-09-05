@@ -16,7 +16,7 @@ app.use(
 app.use("/api/v1/page", pageRoute);
 
 const start = () => {
-  app.listen(port, console.log(`Server is listening port ${port}...`));
+  app.listen(port, console.log(`Server is listening to port ${port}...`));
 };
 
 start();
