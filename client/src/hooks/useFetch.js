@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const API_ENDPOINT = "http://localhost:5000/api/v1/page/";
+const API_ENDPOINT = "https://notion-page-api.herokuapp.com/api/v1/page/";
 
 export const useFetch = ({ id }) => {
   const [data, setData] = useState({});
