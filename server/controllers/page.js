@@ -1,5 +1,8 @@
 const { getPageData, getBlockData } = require("../api/notion");
 
+let updatedTime = "";
+let cachedData = {};
+
 const parsePage = (page) => {
   return {
     [page.id]: {
@@ -98,9 +101,13 @@ const getPage = async (req, res) => {
   const {
     params: { id },
   } = req;
+  const page = await getPageData(id);
+  if (page.last_edited_time === updatedTime) {
+    return res.status(200).json({ ...cachedData });
+  }
   let responseData = {};
-  const [page, blocks] = await Promise.all([getPageData(id), getBlockData(id)]);
   responseData = { ...responseData, ...parsePage(page) };
+  const blocks = await getBlockData(id);
   const parsedBlock = [];
   for (const block of blocks) {
     parsedBlock.push(parseBlock(block));
@@ -110,6 +117,8 @@ const getPage = async (req, res) => {
   for (let i = 0; i < newBlocks.length; i++) {
     responseData = { ...responseData, ...newBlocks[i] };
   }
+  updatedTime = page.last_edited_time;
+  cachedData = responseData;
   res.status(200).json({ ...responseData });
 };
 
