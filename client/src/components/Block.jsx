@@ -1,6 +1,8 @@
 import React from "react";
 import { findListGroupIndex } from "../utils/utils";
 
+const OL_TYPE = ["1", "a", "i"];
+
 const renderText = (titles) => {
   if (!titles.length) {
     return "";
@@ -57,7 +59,7 @@ const renderText = (titles) => {
   });
 };
 
-const Block = ({ value, blockGroup }) => {
+const Block = ({ value, blockGroup, depth }) => {
   const { id, type, properties, children } = value;
   switch (type) {
     case "page": {
@@ -109,7 +111,6 @@ const Block = ({ value, blockGroup }) => {
         <ul>
           <li>{renderText(properties.title)}</li>
           {Object.keys(children).map((child) => {
-            console.log(children[child]);
             return (
               <Block
                 key={child}
@@ -124,15 +125,15 @@ const Block = ({ value, blockGroup }) => {
     case "numbered_list_item": {
       const startIndex = findListGroupIndex(blockGroup, id);
       return (
-        <ol start={startIndex}>
+        <ol start={startIndex} type={OL_TYPE[depth]}>
           <li>{renderText(properties.title)}</li>
           {Object.keys(children).map((child) => {
-            console.log(children[child]);
             return (
               <Block
                 key={child}
                 value={children[child].value}
                 blockGroup={blockGroup}
+                depth={depth + 1}
               />
             );
           })}
@@ -144,7 +145,6 @@ const Block = ({ value, blockGroup }) => {
         <details>
           <summary>{renderText(properties.title)}</summary>
           {Object.keys(children).map((child) => {
-            console.log(children[child]);
             return (
               <Block
                 key={child}

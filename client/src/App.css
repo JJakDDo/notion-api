@@ -41,6 +41,7 @@ ol > ol,
 ul > ul,
 ul > ol {
   padding-left: 1em;
+  padding-right: 0px;
 }
 
 h1,
@@ -82,6 +83,7 @@ ul {
   padding-top: 3px;
   padding-bottom: 3px;
   line-height: 1.5;
+  text-align: justify;
 }
 
 .inline-code {

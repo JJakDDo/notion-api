@@ -21,9 +21,14 @@ const parseBlock = async (block) => {
   let children = {};
   if (block.has_children) {
     const childrenBlock = await getBlockData(block.id);
+    const temp = [];
     for (const child of childrenBlock) {
-      const temp = await parseBlock(child);
-      children = { ...children, ...temp };
+      temp.push(parseBlock(child));
+    }
+
+    const newTemp = await Promise.all(temp);
+    for (let i = 0; i < newTemp.length; i++) {
+      children = { ...children, ...newTemp[i] };
     }
   }
   if (block.type === "child_page") {
@@ -94,12 +99,16 @@ const getPage = async (req, res) => {
     params: { id },
   } = req;
   let responseData = {};
-  const page = await getPageData(id);
+  const [page, blocks] = await Promise.all([getPageData(id), getBlockData(id)]);
   responseData = { ...responseData, ...parsePage(page) };
-  const blocks = await getBlockData(id);
+  const parsedBlock = [];
   for (const block of blocks) {
-    const parsedBlock = await parseBlock(block);
-    responseData = { ...responseData, ...parsedBlock };
+    parsedBlock.push(parseBlock(block));
+  }
+  //responseData = { ...responseData, ...parsedBlock };
+  const newBlocks = await Promise.all(parsedBlock);
+  for (let i = 0; i < newBlocks.length; i++) {
+    responseData = { ...responseData, ...newBlocks[i] };
   }
   res.status(200).json({ ...responseData });
 };

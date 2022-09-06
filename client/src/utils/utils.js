@@ -1,11 +1,19 @@
 export const getListGroup = (blocks) => {
-  const output = [];
+  let output = [];
   let lastType = undefined;
   let index = -1;
 
   Object.keys(blocks).forEach((blockId) => {
+    let childrenBlock = [];
+    if (
+      blocks[blockId].value.children &&
+      Object.keys(blocks[blockId].value.children).length
+    ) {
+      childrenBlock.push(...getListGroup(blocks[blockId].value.children));
+    }
+    output = [...output, ...childrenBlock];
     if (blocks[blockId].value.type !== lastType) {
-      index++;
+      index = output.length;
       output[index] = [blockId];
       lastType = blocks[blockId].value.type;
     } else {

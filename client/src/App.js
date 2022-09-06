@@ -11,7 +11,12 @@ function App() {
   return (
     <div className='App'>
       {ids.map((id) => (
-        <Block key={id} value={data[id].value} blockGroup={blockGroup} />
+        <Block
+          key={id}
+          value={data[id].value}
+          blockGroup={blockGroup}
+          depth={0}
+        />
       ))}
     </div>
   );
