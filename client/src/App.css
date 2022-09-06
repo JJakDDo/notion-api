@@ -44,6 +44,10 @@ ul > ol {
   padding-right: 0px;
 }
 
+ol > h2 {
+  padding-left: 0;
+  padding-right: 0;
+}
 h1,
 h2,
 h3 {
@@ -137,4 +141,22 @@ hr {
   height: 1px;
   background: rgba(55, 53, 47, 0.16);
   border: none;
+}
+
+@media (max-width: 768px) {
+  .page_title,
+  h1,
+  h2,
+  h3,
+  p,
+  .notion-checkbox,
+  details {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  ol,
+  ul {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
 }
