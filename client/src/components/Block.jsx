@@ -1,7 +1,20 @@
 import React from "react";
 import { findListGroupIndex } from "../utils/utils";
-import { Box, Container, Typography, Divider, FormGroup, FormControlLabel, Checkbox, List, ListItem, Accordion, AccordionSummary, AccordionDetails  } from '@mui/material';
-import { ExpandMore  } from '@mui/icons-material'
+import {
+  Box,
+  Container,
+  Typography,
+  Divider,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  List,
+  ListItem,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+} from "@mui/material";
+import { ExpandMore } from "@mui/icons-material";
 const OL_TYPE = ["decimal", "lower-alpha", "lower-roman"];
 
 const renderText = (titles) => {
@@ -64,48 +77,76 @@ const Block = ({ value, blockGroup, depth }) => {
   const { id, type, properties, children } = value;
   switch (type) {
     case "page": {
-      return (<Box sx={{
-      display: 'flex',
-      flexDirection: 'column',justifyContent: 'center', alignItems: 'center'}}>
-          <div style={{width: '100vw', height: '250px', overflow: 'hidden'}}>
-            <img src={properties.cover} style={{width: '100%'}}></img>
+      return (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ width: "100vw", height: "250px", overflow: "hidden" }}>
+            <img src={properties.cover} style={{ width: "100%" }}></img>
           </div>
-          <Typography variant='title' component='div'>{properties.title.text}</Typography>
-        </Box>)
+          <Typography variant="title" component="div">
+            {properties.title.text}
+          </Typography>
+        </Box>
+      );
     }
     case "heading_1": {
-      return <Typography variant='h1'>{renderText(properties.title)}</Typography>;
+      return (
+        <Typography variant="h1">{renderText(properties.title)}</Typography>
+      );
     }
     case "heading_2": {
-      return <Typography variant='h2'>{renderText(properties.title)}</Typography>;
+      return (
+        <Typography variant="h2">{renderText(properties.title)}</Typography>
+      );
     }
     case "heading_3": {
-      return <Typography variant='h3'>{renderText(properties.title)}</Typography>;
+      return (
+        <Typography variant="h3">{renderText(properties.title)}</Typography>
+      );
     }
     case "paragraph": {
-      return <Typography variant='p' component='p' sx={{width: '70%'}}>{renderText(properties.title)}</Typography>;
+      return (
+        <Typography variant="p" component="p" sx={{ width: "70%" }}>
+          {renderText(properties.title)}
+        </Typography>
+      );
     }
     case "to_do": {
-      return (<FormGroup sx={{width: '70%', padding: '0 24px'}}>
-        <FormControlLabel control={<Checkbox checked={properties.checked} />} label={renderText(properties.title)} />
-      </FormGroup>
+      return (
+        <FormGroup sx={{ width: "70%" }}>
+          <FormControlLabel
+            control={<Checkbox checked={properties.checked} />}
+            label={renderText(properties.title)}
+          />
+        </FormGroup>
       );
     }
     case "divider": {
-      return <Divider variant="middle" sx={{width:'70%',
-      marginTop: '0.6em',
-      marginBottom: '0.6em'}}/>;
+      return (
+        <Divider
+          variant="middle"
+          sx={{ width: "70%", marginTop: "0.6em", marginBottom: "0.6em" }}
+        />
+      );
     }
     case "bulleted_list_item": {
       return (
-        <List sx={{
-          width: '70%',
-          listStyleType: 'disc',
-           padding: '0 24px 0 48px',
-          '& .MuiListItem-root': {
-           display: 'list-item',
-          },
-         }}>
+        <List
+          sx={{
+            width: "70%",
+            listStyleType: "disc",
+            padding: "0 24px",
+            "& .MuiListItem-root": {
+              display: "list-item",
+            },
+          }}
+        >
           <ListItem>{renderText(properties.title)}</ListItem>
           {Object.keys(children).map((child) => {
             return (
@@ -122,16 +163,18 @@ const Block = ({ value, blockGroup, depth }) => {
     case "numbered_list_item": {
       const startIndex = findListGroupIndex(blockGroup, id);
       return (
-        <List sx={{
-          width: '70%',
-          listStyleType: OL_TYPE[depth],
-           padding: '0 24px 0 48px',
-          '& .MuiListItem-root': {
-           display: 'list-item',
-          },
-         }}
+        <List
+          sx={{
+            width: "70%",
+            listStyleType: OL_TYPE[depth],
+            padding: "0 24px",
+            "& .MuiListItem-root": {
+              display: "list-item",
+            },
+          }}
           start={startIndex}
-          type={OL_TYPE[depth]}>
+          type={OL_TYPE[depth]}
+        >
           <ListItem start={startIndex}>{renderText(properties.title)}</ListItem>
           {Object.keys(children).map((child) => {
             return (
@@ -160,14 +203,11 @@ const Block = ({ value, blockGroup, depth }) => {
     }
     case "toggle": {
       return (
-        <Accordion sx={{width: '65%',
-        margin: '10px 24px',}}>
-          <AccordionSummary
-            expandIcon={<ExpandMore />}
-          >
+        <Accordion sx={{ width: "70%", margin: "10px 0" }}>
+          <AccordionSummary expandIcon={<ExpandMore />}>
             <Typography>{renderText(properties.title)}</Typography>
           </AccordionSummary>
-          <AccordionDetails>            
+          <AccordionDetails>
             {Object.keys(children).map((child) => {
               return (
                 <Block
@@ -183,10 +223,15 @@ const Block = ({ value, blockGroup, depth }) => {
     }
     case "image": {
       return (
-        <Container sx={{position: 'relative', width: '70%', mt: '10px', mb: '10px'}}>
-          <img src={properties.url} style={{width: '100%', objectFit: 'contain'}}></img>
+        <Container
+          sx={{ position: "relative", width: "75%", mt: "10px", mb: "10px" }}
+        >
+          <img
+            src={properties.url}
+            style={{ width: "100%", objectFit: "contain" }}
+          ></img>
         </Container>
-      )
+      );
     }
     default: {
       return <div />;
