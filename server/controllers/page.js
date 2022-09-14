@@ -13,6 +13,7 @@ const parsePage = (page) => {
           title: {
             text: page.properties.title.title[0].text.content,
           },
+          cover: page.cover[page.cover.type].url,
         },
       },
     },
@@ -42,6 +43,20 @@ const parseBlock = async (block) => {
           type: block.type,
           properties: {
             title: [{ text: block["child_page"].title }],
+          },
+          children,
+        },
+      },
+    };
+  }
+  if (block.type === "image"){
+    return {
+      [block.id]: {
+        value: {
+          id: block.id,
+          type: block.type,
+          properties: {
+            url: block['image'][block['image'].type].url,
           },
           children,
         },

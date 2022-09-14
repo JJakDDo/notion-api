@@ -1,7 +1,8 @@
 import React from "react";
 import { findListGroupIndex } from "../utils/utils";
-
-const OL_TYPE = ["1", "a", "i"];
+import { Box, Container, Typography, Divider, FormGroup, FormControlLabel, Checkbox, List, ListItem, Accordion, AccordionSummary, AccordionDetails  } from '@mui/material';
+import { ExpandMore  } from '@mui/icons-material'
+const OL_TYPE = ["decimal", "lower-alpha", "lower-roman"];
 
 const renderText = (titles) => {
   if (!titles.length) {
@@ -63,53 +64,49 @@ const Block = ({ value, blockGroup, depth }) => {
   const { id, type, properties, children } = value;
   switch (type) {
     case "page": {
-      return <div className='page_title'>{properties.title.text}</div>;
+      return (<Box sx={{
+      display: 'flex',
+      flexDirection: 'column',justifyContent: 'center', alignItems: 'center'}}>
+          <div style={{width: '100vw', height: '250px', overflow: 'hidden'}}>
+            <img src={properties.cover} style={{width: '100%'}}></img>
+          </div>
+          <Typography variant='title' component='div'>{properties.title.text}</Typography>
+        </Box>)
     }
     case "heading_1": {
-      return <h1>{renderText(properties.title)}</h1>;
+      return <Typography variant='h1'>{renderText(properties.title)}</Typography>;
     }
     case "heading_2": {
-      return <h2>{renderText(properties.title)}</h2>;
+      return <Typography variant='h2'>{renderText(properties.title)}</Typography>;
     }
     case "heading_3": {
-      return <h3>{renderText(properties.title)}</h3>;
+      return <Typography variant='h3'>{renderText(properties.title)}</Typography>;
     }
     case "paragraph": {
-      return <p>{renderText(properties.title)}</p>;
+      return <Typography variant='p' component='p' sx={{width: '70%'}}>{renderText(properties.title)}</Typography>;
     }
     case "to_do": {
-      return (
-        <div className='notion-checkbox'>
-          <div
-            className={
-              properties.checked ? "checkbox-icon-true" : "checkbox-icon-false"
-            }
-          >
-            {properties.checked && (
-              <svg viewBox='0 0 14 14'>
-                <polygon points='5.5 11.9993304 14 3.49933039 12.5 2 5.5 8.99933039 1.5 4.9968652 0 6.49933039'></polygon>
-              </svg>
-            )}
-          </div>
-          <span
-            className={
-              properties.checked
-                ? "checkbox-text checkbox-false"
-                : "checkbox-text"
-            }
-          >
-            {renderText(properties.title)}
-          </span>
-        </div>
+      return (<FormGroup sx={{width: '70%', padding: '0 24px'}}>
+        <FormControlLabel control={<Checkbox checked={properties.checked} />} label={renderText(properties.title)} />
+      </FormGroup>
       );
     }
     case "divider": {
-      return <hr />;
+      return <Divider variant="middle" sx={{width:'70%',
+      marginTop: '0.6em',
+      marginBottom: '0.6em'}}/>;
     }
     case "bulleted_list_item": {
       return (
-        <ul>
-          <li>{renderText(properties.title)}</li>
+        <List sx={{
+          width: '70%',
+          listStyleType: 'disc',
+           padding: '0 24px 0 48px',
+          '& .MuiListItem-root': {
+           display: 'list-item',
+          },
+         }}>
+          <ListItem>{renderText(properties.title)}</ListItem>
           {Object.keys(children).map((child) => {
             return (
               <Block
@@ -119,42 +116,77 @@ const Block = ({ value, blockGroup, depth }) => {
               />
             );
           })}
-        </ul>
+        </List>
       );
     }
     case "numbered_list_item": {
       const startIndex = findListGroupIndex(blockGroup, id);
       return (
-        <ol start={startIndex} type={OL_TYPE[depth]}>
-          <li>{renderText(properties.title)}</li>
+        <List sx={{
+          width: '70%',
+          listStyleType: OL_TYPE[depth],
+           padding: '0 24px 0 48px',
+          '& .MuiListItem-root': {
+           display: 'list-item',
+          },
+         }}
+          start={startIndex}
+          type={OL_TYPE[depth]}>
+          <ListItem start={startIndex}>{renderText(properties.title)}</ListItem>
           {Object.keys(children).map((child) => {
             return (
               <Block
                 key={child}
                 value={children[child].value}
                 blockGroup={blockGroup}
-                depth={depth + 1}
               />
             );
           })}
-        </ol>
+        </List>
+        // <ol start={startIndex} type={OL_TYPE[depth]}>
+        //   <li>{renderText(properties.title)}</li>
+        //   {Object.keys(children).map((child) => {
+        //     return (
+        //       <Block
+        //         key={child}
+        //         value={children[child].value}
+        //         blockGroup={blockGroup}
+        //         depth={depth + 1}
+        //       />
+        //     );
+        //   })}
+        // </ol>
       );
     }
     case "toggle": {
       return (
-        <details>
-          <summary>{renderText(properties.title)}</summary>
-          {Object.keys(children).map((child) => {
-            return (
-              <Block
-                key={child}
-                value={children[child].value}
-                blockGroup={blockGroup}
-              />
-            );
-          })}
-        </details>
+        <Accordion sx={{width: '65%',
+        margin: '10px 24px',}}>
+          <AccordionSummary
+            expandIcon={<ExpandMore />}
+          >
+            <Typography>{renderText(properties.title)}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>            
+            {Object.keys(children).map((child) => {
+              return (
+                <Block
+                  key={child}
+                  value={children[child].value}
+                  blockGroup={blockGroup}
+                />
+              );
+            })}
+          </AccordionDetails>
+        </Accordion>
       );
+    }
+    case "image": {
+      return (
+        <Container sx={{position: 'relative', width: '70%', mt: '10px', mb: '10px'}}>
+          <img src={properties.url} style={{width: '100%', objectFit: 'contain'}}></img>
+        </Container>
+      )
     }
     default: {
       return <div />;

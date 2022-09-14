@@ -9,7 +9,6 @@ export const useFetch = ({ id }) => {
     const fetchData = async () => {
       const response = await fetch(`${API_ENDPOINT}${id}`);
       const data = await response.json();
-      console.log(data);
       setData(data);
     };
 
