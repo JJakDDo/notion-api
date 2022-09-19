@@ -13,6 +13,13 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper
 } from "@mui/material";
 import { ExpandMore } from "@mui/icons-material";
 const OL_TYPE = ["decimal", "lower-alpha", "lower-roman"];
@@ -74,7 +81,7 @@ const renderText = (titles) => {
 };
 
 const Block = ({ value, blockGroup, depth }) => {
-  const { id, type, properties, children } = value;
+  const { id, type, properties, children, hasColumnHeader } = value;
   switch (type) {
     case "page": {
       return (
@@ -232,6 +239,49 @@ const Block = ({ value, blockGroup, depth }) => {
           ></img>
         </Container>
       );
+    }
+    case 'table': {
+      let tableCells = [...properties.cells];
+      return (
+        <TableContainer component={Paper}sx={{ width: "70%"}}>
+          <Table>
+            {
+              hasColumnHeader && (
+                <TableHead>
+                  {
+                    tableCells[0].map((cell, i) => {
+                      return (<TableCell>
+                        {renderText(cell)}
+                      </TableCell>)
+                    })
+                  }
+                </TableHead>
+              )
+            }
+            <TableBody>
+              {
+                tableCells.map((cells, index) => {
+                  if(hasColumnHeader && index === 0){
+                    return;
+                  }
+
+                  return (
+                    <TableRow key={index}>
+                      {
+                        cells.map((cell, i) => {
+                          return (<TableCell component="th" scope="row">
+                            {renderText(cell)}
+                          </TableCell>)
+                        })
+                      }
+                    </TableRow>
+                  )
+                })
+              }
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )
     }
     default: {
       return <div />;

@@ -23,6 +23,39 @@ const parsePage = (page) => {
 const parseBlock = async (block) => {
   const title = [];
   let children = {};
+  
+
+  if(block.type === 'table') {
+    const childrenBlock = await getBlockData(block.id);
+    const cells = childrenBlock.map(child => {
+      return child.table_row.cells.map(cell => {
+        const cellText = [];
+        for (let i = 0; i < cell.length; i++) {
+          cellText.push({
+            text: cell[i].plain_text,
+            annotations: cell[i].annotations,
+            href: cell[i].href,
+          });
+        }
+        return cellText;
+      })
+    });
+
+    return {
+      [block.id]: {
+        value: {
+          id: block.id,
+          type: block.type,
+          hasColumnHeader: block.table.has_column_header,
+          properties: {
+            cells
+          },
+          children,
+        }
+      }
+    }
+  }
+
   if (block.has_children) {
     const childrenBlock = await getBlockData(block.id);
     const temp = [];
@@ -74,6 +107,7 @@ const parseBlock = async (block) => {
       },
     };
   }
+
   const texts = block[block.type]?.rich_text || [];
   for (let i = 0; i < texts.length; i++) {
     title.push({
