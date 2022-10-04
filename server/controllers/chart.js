@@ -4,8 +4,14 @@ const fs = require("fs");
 function getData() {
   return new Promise(async (resolve, reject) => {
     try {
+      const today = new Date();
+      const day = today.getDate();
+      const weekAgo = new Date(
+        new Date().setDate(day - 7)
+      ).toLocaleDateString();
+      const newDate = weekAgo.replace(/\. /g, "-").replace(".", "");
       const response = await axios.get(
-        "https://tessverso.io/koex/api/stat/korbit/btc/minute?from=2022-09-23"
+        `https://tessverso.io/koex/api/stat/korbit/btc/minute?from=${newDate}`
       );
 
       resolve(
@@ -41,7 +47,6 @@ const generateChart = async (req, res) => {
           </defs>
 
           <rect height="48" style="fill:rgb(255,255,255);fill-opacity:0;stroke:none;" width="164" x="0" y="0"></rect>
-          <rect height="48" style="fill:rgb(255,255,255);fill-opacity:0;stroke:none;" width="164" x="0" y="0"></rect>
           <g clip-path="url(#clip)">`
   );
 
@@ -62,14 +67,25 @@ const generateChart = async (req, res) => {
         </svg>
       `);
 
-  fs.writeFile("chart.svg", svg.join("").replace(/\n/g, ""), (err) => {
-    if (err) throw err;
+  fs.writeFile(
+    "./public/chart/chart.svg",
+    svg.join("").replace(/\n/g, ""),
+    (err) => {
+      if (err) throw err;
 
-    console.log("SVG written");
-    res.set({
-      "content-type": "img/svg+xml",
-    });
-  });
+      console.log("SVG written");
+
+      fs.readFile("./public/chart/chart.svg", (err, data) => {
+        if (err) throw err;
+
+        // res.set({
+        //   "content-type": "img/svg+xml",
+        // });
+        res.writeHead(201, { "content-type": "img/svg+xml" });
+        res.end(data);
+      });
+    }
+  );
 };
 
 module.exports = {
